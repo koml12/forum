@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+<h1><a href="{{ forumpost.post_link }}"> {{ forumpost.post_text }}</a></h1>
+    <form method="post" action="">
+        {% csrf_token %}
+        <input type="text" id="text" name="text" placeholder="Add a comment here">
+        <input type="submit" id="submit">
+    </form>
+
+    <ul>
+    {% for comment in forumpost.comment_set.all %}
+        <li>{{ comment.text }}</li>
+    {% endfor %}
+    </ul>
+
+
+</body>
+{% endblock %}
+</html>

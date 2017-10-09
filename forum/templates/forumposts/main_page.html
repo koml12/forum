@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+{% extends "base.html" %}
+<head>
+    {% block title %}
+    <title>Forum</title>
+    {% endblock %}
+</head>
+
+<body>
+    {% block content %}
+    <h1>Welcome to the Forum!</h1>
+
+    {% if invalid_url %}
+        <p>Invalid URL. We could not process your post.</p>
+    {% endif %}
+
+    {% if post_list %}
+        <p>Here are the posts.</p>
+        <ul>
+            {% for post in post_list %}
+                <form method="get">
+                <li>
+                    <p><a href={{ post.post_link }}>{{ post.post_text }}</a></p>
+                    <p><a href={{ post.get_absolute_url }}>Comments</a> </p>
+                    <button type="button" class="like-button" id="{{ post.id }}">Like</button>
+                </li>
+                </form>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No posts available.</p>
+    {% endif %}
+
+    <form action="{% url 'forumposts:add posts' %}">
+        {% csrf_token %}
+        <input type="submit" value="Add a post">
+    </form>
+
+    {% endblock %}
+
+</body>
+
+{% block javascript %}
+    <script>
+        var buttons = document.getElementsByClassName("like-button");
+        for (var i = 0; i < buttons.length; i++) {
+            var btnLike = buttons[i];
+            var btnId = btnLike.getAttribute("id");
+            btnLike.addEventListener('click', function () {
+                console.log("Clicked");
+                $.ajax({
+                    url: '/forumposts/ajax/likepost',
+                    type: 'GET',
+                    data: {
+                        id: btnId
+                    },
+                    success: function () {
+                        console.log('Success');
+                    },
+                    failure: function () {
+                        console.log('Failure');
+                    }
+                });
+            })
+        }
+
+    </script>
+{% endblock %}
+</html>
